@@ -25,11 +25,11 @@ If you want to contribute to the source code, **fork this repository** and **cre
 
 Also, don’t forget to add unit tests for any new or changed functionality.
 
-If you want to report a bug; or share a comment or suggestion, [file an issue](https://github.com/sotaaaaa/backend-nodejs/issues/new).
+If you want to report a bug; or share a comment or suggestion, [file an issue](https://github.com/sotaaaaa/nodejs-backend-ts/issues/new).
 
 ## I’ve Found a Bug; I Have an Idea
 
-[For bug reports and suggestions, please file an issue](https://github.com/sotaaaaa/backend-nodejs/issues/new).
+[For bug reports and suggestions, please file an issue](https://github.com/sotaaaaa/nodejs-backend-ts/issues/new).
 
 
 ## Contact Information
