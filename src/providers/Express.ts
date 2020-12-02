@@ -17,8 +17,8 @@ class Express {
     constructor() {
         this.express = express();
         this.mountDotEnv();
-        this.mountMiddlewares();
         this.mountRoutes();
+        this.mountMiddlewares();
     }
 
     /**
@@ -39,8 +39,8 @@ class Express {
      * Mounts all the defined routes
      */
     private mountRoutes(): void {
-        BaseRoutes.mountWeb(this.express);
-        BaseRoutes.mountApi(this.express);
+        BaseRoutes.mountApiV1(this.express);
+        BaseRoutes.mountApiV2(this.express);
     }
 
     /**
@@ -50,7 +50,10 @@ class Express {
         // Start the server on the specified port
         const port: number = Locals.config().port;
         this.express.listen(port, () => {
-            return console.log('\x1b[33m%s\x1b[0m', `Server :: Running @ ${Locals.config().port}'`);
+            return console.log(
+                '\x1b[33m%s\x1b[0m',
+                `Server :: Running server on port @ ${Locals.config().port}'`,
+            );
         });
     }
 }

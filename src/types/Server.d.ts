@@ -14,6 +14,6 @@ export interface INextFunction extends NextFunction {}
 export interface IRouterConfig {
     method: 'get' | 'post' | 'put' | 'delete';
     path: string;
-    middlewares: any;
+    middlewares: any[];
     handlers: any;
 }

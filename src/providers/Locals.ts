@@ -18,25 +18,23 @@ class Locals {
         const maxUploadLimit = process.env.APP_MAX_UPLOAD_LIMIT || '50mb';
         const maxParameterLimit = process.env.APP_MAX_PARAMETER_LIMIT || 100;
 
-        const name = 'NodeJS-BackEnd-Typescript';
+        const name = 'NodeJS BackEnd Typescript API Version 1.0';
         const year = new Date().getFullYear();
         const copyright = `Copyright ${year} ${name} | All Rights Reserved`;
 
         const isCORSEnabled = true;
         const jwtExpiresIn = process.env.JWT_EXPIRES_IN || '1d';
-        const apiPrefix = process.env.API_PREFIX || 'api';
-        const apiVersion = process.env.API_VERSION || 'v1';
+        const apiPrefixV1 = process.env.API_PREFIX_V1 || 'v1';
 
         return {
             appSecret,
-            apiPrefix,
+            apiPrefixV1,
             copyright,
             isCORSEnabled,
             jwtExpiresIn,
             maxUploadLimit,
             maxParameterLimit,
             mongooseUrl,
-            apiVersion,
             name,
             port,
             host,
