@@ -6,6 +6,6 @@
         "sourceMap": true,
         "experimentalDecorators": true
     },
-    "include": ["src/**/*.ts"],
+    "include": ["src/**/*.ts", "./tests/"],
     "exclude": ["node_modules"]
 }
