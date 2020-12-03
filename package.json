@@ -1,15 +1,15 @@
 {
-    "name": "nodejs-backend-typescript",
+    "name": "nodejs-backend-ts",
     "version": "1.0.0",
     "description": "The architecture for nodejs backend application. It is build on top of expressjs using typescript.",
-    "main": "index.js",
+    "main": "server.js",
     "directories": {
         "test": "test"
     },
     "scripts": {
         "start": "node ./dist/server.js",
         "start:dev": "nodemon",
-        "start:test": "NODE_TESTING=start nodemon",
+        "start:test": "NODE_TESTING=start node ./dist/server.js",
         "build": "tsc --project './tsconfig.json'",
         "lint": "npm run tslint \"src/**/*.ts\"",
         "mocha:v1": "mocha -r ts-node/register 'tests/v1/**/*.ts'",
@@ -17,14 +17,14 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/sotaaaaa/nodejs-backend-typescript.git"
+        "url": "git+https://github.com/sotaaaaa/nodejs-backend-ts.git"
     },
     "author": "Sotaaaaa",
     "license": "ISC",
     "bugs": {
-        "url": "https://github.com/sotaaaaa/nodejs-backend-typescript/issues"
+        "url": "https://github.com/sotaaaaa/nodejs-backend-ts/issues"
     },
-    "homepage": "https://github.com/sotaaaaa/nodejs-backend-typescript#readme",
+    "homepage": "https://github.com/sotaaaaa/nodejs-backend-ts#readme",
     "dependencies": {
         "bcrypt": "^5.0.0",
         "body-parser": "^1.19.0",
@@ -48,7 +48,6 @@
         "@types/express": "^4.17.9",
         "@types/jsonwebtoken": "^8.5.0",
         "@types/mocha": "^8.0.4",
-        "@types/mongoose": "^5.10.1",
         "chai": "^4.2.0",
         "chai-http": "^4.3.0",
         "mocha": "^8.2.1",

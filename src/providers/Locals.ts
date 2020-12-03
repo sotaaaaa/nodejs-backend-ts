@@ -17,14 +17,14 @@ class Locals {
         const mongooseUrl = process.env.MONGOOSE_URL;
         const maxUploadLimit = process.env.APP_MAX_UPLOAD_LIMIT || '50mb';
         const maxParameterLimit = process.env.APP_MAX_PARAMETER_LIMIT || 100;
+        const jwtExpiresIn = process.env.JWT_EXPIRES_IN || '1d';
 
         const name = 'NodeJS BackEnd Typescript API Version 1.0';
         const year = new Date().getFullYear();
         const copyright = `Copyright ${year} ${name} | All Rights Reserved`;
 
         const isCORSEnabled = true;
-        const jwtExpiresIn = process.env.JWT_EXPIRES_IN || '1d';
-        const apiPrefixV1 = process.env.API_PREFIX_V1 || 'v1';
+        const apiPrefixV1 = process.env.API_PREFIX_V1;
 
         return {
             appSecret,

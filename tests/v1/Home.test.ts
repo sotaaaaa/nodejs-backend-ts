@@ -6,7 +6,11 @@ import Locals from '../../src/providers/Locals';
 chai.use(chaiHttp);
 
 let should = chai.should();
-let server = `http://localhost:${Locals.config().port}/v1`;
+let server = `http://localhost:${Locals.config().port}/${
+    Locals.config().apiPrefixV1
+}`;
+
+console.log(server, 'SERVER TEST');
 
 /*
  * Test the /GET route
