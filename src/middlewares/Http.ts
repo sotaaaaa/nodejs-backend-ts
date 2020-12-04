@@ -3,11 +3,11 @@ import * as compress from 'compression';
 import * as bodyParser from 'body-parser';
 import * as session from 'cookie-session';
 
-import { RES } from '../helps/Resolve';
 import { Application } from 'express';
 
 import Log from '../providers/Log';
 import Locals from '../providers/Locals';
+import Resolve from '../helps/Resolve';
 
 class Http {
     public static mount(_express: Application): Application {
@@ -20,7 +20,9 @@ class Http {
             bodyParser.json({
                 limit: Locals.config().maxUploadLimit,
             })(req, res, (err) => {
-                if (err) RES.badRequest(req, res, 'Có lỗi xảy ra');
+                if (err) {
+                    Resolve.badRequestMsg(req, res, 'Có lỗi xảy ra');
+                }
                 next();
             });
         });
@@ -31,7 +33,9 @@ class Http {
                 parameterLimit: Locals.config().maxParameterLimit,
                 extended: false,
             })(req, res, (err) => {
-                if (err) RES.badRequest(req, res, 'Có lỗi xảy ra');
+                if (err) {
+                    Resolve.badRequestMsg(req, res, 'Có lỗi xảy ra');
+                }
                 next();
             });
         });

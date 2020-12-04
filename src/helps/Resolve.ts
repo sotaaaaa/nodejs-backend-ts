@@ -1,212 +1,206 @@
-'use strict';
-
-import Log from '../providers/Log';
+import { IRequest, IResponse } from '../types/Server';
 import Util from './Utils';
+import Log from '../providers/Log';
 
-let _hasOwnProperty = Object.prototype.hasOwnProperty;
+export enum STATUS_CODE {
+    OK = 200,
+    BAD_REQUEST = 400,
+    UNAUTHORIZED = 401,
+    FORBIDDEN = 403,
+    NOT_FOUND = 404,
+    UNSUPPORTED_ACTION = 405,
+    VALIDATION_FAILED = 422,
+    SERVER_ERROR = 500,
+    CREATED = 201,
+    TOO_MANY_REQUESTS = 429,
+}
 
-let Status = {
-    OK: 200,
-    BAD_REQUEST: 400,
-    UNAUTHORIZED: 401,
-    FORBIDDEN: 403,
-    NOT_FOUND: 404,
-    UNSUPPORTED_ACTION: 405,
-    VALIDATION_FAILED: 422,
-    SERVER_ERROR: 500,
-    CREATED: 201,
-    TOO_MANY_REQUESTS: 429,
-};
+interface IJsonRes {
+    res: IResponse;
+    body: any;
+    options: {
+        status: STATUS_CODE;
+    };
+}
 
-const statusMessage = (status) => {
-    switch (status) {
-        case Status.BAD_REQUEST:
-            return 'Bad Request';
-        case Status.UNAUTHORIZED:
-            return 'Unauthorized';
-        case Status.FORBIDDEN:
-            return 'Forbidden';
-        case Status.NOT_FOUND:
-            return 'Not Found';
-        case Status.UNSUPPORTED_ACTION:
-            return 'Unsupported Action';
-        case Status.VALIDATION_FAILED:
-            return 'Validation Failed';
-        case Status.SERVER_ERROR:
-            return 'Internal Server Error';
-        case Status.CREATED:
-            return 'Created';
-        case Status.OK:
-            return 'Success';
-        case Status.TOO_MANY_REQUESTS:
-            return 'Too Many Requests';
-    }
-};
-
-const jsonResponse = (res, body, options) => {
-    options = options || {};
-    options.status = options.status || Status.OK;
-    res.status(options.status).json(body || null);
-};
-
-const RES = {
-    ok: function (req, res, data, option?: { pagination?; query?; omit?: string[] }) {
-        let body = {
-            status: statusMessage(Status.OK),
-            data: option?.omit?.length ? Util.omit(data, option.omit) : data,
-        };
-
-        if (option?.pagination) body['pagination'] = option?.pagination;
-        if (option?.query) body['query'] = option?.query;
-
-        jsonResponse(res, body, {
-            status: Status.OK,
-        });
-    },
-
-    badRequest: function (req, res, errors) {
-        let body = {
-            status: statusMessage(Status.BAD_REQUEST),
-            errors: errors,
-        };
-
-        jsonResponse(res, body, {
-            status: Status.BAD_REQUEST,
-        });
-    },
-
-    unauthorized: function (req, res, error) {
-        let body = {
-            status: statusMessage(Status.UNAUTHORIZED),
-            error: error,
-        };
-
-        jsonResponse(res, body, {
-            status: Status.UNAUTHORIZED,
-        });
-    },
-
-    forbidden: function (req, res, error) {
-        let body = {
-            status: statusMessage(Status.FORBIDDEN),
-            error: error,
-        };
-
-        jsonResponse(res, body, {
-            status: Status.FORBIDDEN,
-        });
-    },
-
-    tooManyRequests: function (req, res, error) {
-        let body = {
-            status: statusMessage(Status.TOO_MANY_REQUESTS),
-            error: error,
-        };
-
-        jsonResponse(res, body, {
-            status: Status.TOO_MANY_REQUESTS,
-        });
-    },
-
-    notFound: function (req, res) {
-        let body = {
-            status: statusMessage(Status.NOT_FOUND),
-        };
-
-        jsonResponse(res, body, {
-            status: Status.NOT_FOUND,
-        });
-    },
-
-    unsupportedAction: function (req, res) {
-        let body = {
-            status: statusMessage(Status.UNSUPPORTED_ACTION),
-        };
-
-        jsonResponse(res, body, {
-            status: Status.UNSUPPORTED_ACTION,
-        });
-    },
-
-    invalid: function (req, res, errors) {
-        errors = Array.isArray(errors) ? errors : [errors];
-
-        let body = {
-            status: statusMessage(Status.VALIDATION_FAILED),
-            errors: errors,
-        };
-
-        jsonResponse(res, body, {
-            status: Status.VALIDATION_FAILED,
-        });
-    },
-    serverError: function (req, res, error) {
-        if (error instanceof Error) {
-            error = {
-                message: 'Có lỗi xảy ra',
-                stacktrace: error.stack,
-            };
+class Resolve {
+    public static statusToMsg(status: STATUS_CODE) {
+        switch (status) {
+            case STATUS_CODE.BAD_REQUEST:
+                return 'Bad Request';
+            case STATUS_CODE.UNAUTHORIZED:
+                return 'Unauthorized';
+            case STATUS_CODE.FORBIDDEN:
+                return 'Forbidden';
+            case STATUS_CODE.NOT_FOUND:
+                return 'Not Found';
+            case STATUS_CODE.UNSUPPORTED_ACTION:
+                return 'Unsupported Action';
+            case STATUS_CODE.VALIDATION_FAILED:
+                return 'Validation Failed';
+            case STATUS_CODE.SERVER_ERROR:
+                return 'Internal Server Error';
+            case STATUS_CODE.CREATED:
+                return 'Created';
+            case STATUS_CODE.OK:
+                return 'Success';
+            case STATUS_CODE.TOO_MANY_REQUESTS:
+                return 'Too Many Requests';
         }
+    }
+
+    public static jsonResponse({ res, body, options }: IJsonRes) {
+        options.status = options.status || STATUS_CODE.OK;
+        res.status(options.status).json(body || null);
+    }
+
+    public static ok(
+        req: IRequest,
+        res: IResponse,
+        data: any,
+        options?: { omit?: string[] },
+    ) {
+        let { omit } = options || {};
         let body = {
-            status: statusMessage(Status.SERVER_ERROR),
-            error: { message: 'Có lỗi xảy ra' },
+            status: this.statusToMsg(STATUS_CODE.OK),
+            data: omit.length ? Util.omit(data, omit) : data,
         };
 
-        let { hostname, originalUrl, method } = req;
+        this.jsonResponse({
+            res,
+            body,
+            options: { status: STATUS_CODE.OK },
+        });
+    }
 
+    public static badRequest(req: IRequest, res: IResponse, errors: any) {
+        let body = {
+            status: this.statusToMsg(STATUS_CODE.BAD_REQUEST),
+            errors: Array.isArray(errors) ? errors : [errors],
+        };
+
+        this.jsonResponse({
+            res,
+            body,
+            options: { status: STATUS_CODE.BAD_REQUEST },
+        });
+    }
+
+    public static badRequestMsg(req: IRequest, res: IResponse, error: string) {
+        let body = {
+            status: this.statusToMsg(STATUS_CODE.BAD_REQUEST),
+            errMsg: error,
+        };
+
+        this.jsonResponse({
+            res,
+            body,
+            options: { status: STATUS_CODE.BAD_REQUEST },
+        });
+    }
+
+    public static unauthorized(req: IRequest, res: IResponse, error: string | object) {
+        let body = {
+            status: this.statusToMsg(STATUS_CODE.UNAUTHORIZED),
+            error: error,
+        };
+
+        this.jsonResponse({
+            res,
+            body,
+            options: { status: STATUS_CODE.UNAUTHORIZED },
+        });
+    }
+
+    public static forbidden(req: IRequest, res: IResponse, error: string | object) {
+        let body = {
+            status: this.statusToMsg(STATUS_CODE.FORBIDDEN),
+            error: error,
+        };
+
+        this.jsonResponse({
+            res,
+            body,
+            options: { status: STATUS_CODE.FORBIDDEN },
+        });
+    }
+
+    public static tooManyRequests(req: IRequest, res: IResponse, error: string | object) {
+        let body = {
+            status: this.statusToMsg(STATUS_CODE.TOO_MANY_REQUESTS),
+            error: error,
+        };
+
+        this.jsonResponse({
+            res,
+            body,
+            options: { status: STATUS_CODE.TOO_MANY_REQUESTS },
+        });
+    }
+
+    public static notFound(req: IRequest, res: IResponse) {
+        let body = {
+            status: this.statusToMsg(STATUS_CODE.NOT_FOUND),
+        };
+
+        this.jsonResponse({
+            res,
+            body,
+            options: { status: STATUS_CODE.NOT_FOUND },
+        });
+    }
+
+    public static unsupportedAction(req: IRequest, res: IResponse) {
+        let body = {
+            status: this.statusToMsg(STATUS_CODE.UNSUPPORTED_ACTION),
+        };
+
+        this.jsonResponse({
+            res,
+            body,
+            options: { status: STATUS_CODE.UNSUPPORTED_ACTION },
+        });
+    }
+
+    public static created(req: IRequest, res: IResponse) {
+        this.jsonResponse({
+            res,
+            body: null,
+            options: { status: STATUS_CODE.CREATED },
+        });
+    }
+
+    public static invalid(req: IRequest, res: IResponse, errors: any) {
+        let body = {
+            status: this.statusToMsg(STATUS_CODE.VALIDATION_FAILED),
+            errors: Array.isArray(errors) ? errors : [errors],
+        };
+
+        this.jsonResponse({
+            res,
+            body,
+            options: { status: STATUS_CODE.VALIDATION_FAILED },
+        });
+    }
+
+    public static serverError(req: IRequest, res: IResponse, error: Error) {
+        let body = {
+            status: this.statusToMsg(STATUS_CODE.SERVER_ERROR),
+            error: 'An error occurred',
+        };
+
+        // Save log server error
+        const { hostname, originalUrl, method } = req;
         Log.error(
-            `HOST: ${hostname} - PATH: ${originalUrl} - METHOD: ${method} - ERROR_MESSAGE: ${error.message} - STACKTRACE: ${error.stacktrace}`,
+            `HOST: ${hostname} - PATH: ${originalUrl} - METHOD: ${method} - ERROR_MESSAGE: ${error.message} - STACKTRACE: ${error?.stack}`,
         );
 
-        jsonResponse(res, body, {
-            status: Status.SERVER_ERROR,
+        this.jsonResponse({
+            res,
+            body,
+            options: { status: STATUS_CODE.SERVER_ERROR },
         });
-    },
+    }
+}
 
-    requireParams: function (req, res, params, next) {
-        let missing = [];
-
-        params = Array.isArray(params) ? params : [params];
-
-        params.forEach(function (param) {
-            if (
-                !(req.body && _hasOwnProperty.call(req.body, param)) &&
-                !(req.params && _hasOwnProperty.call(req.params, param)) &&
-                !_hasOwnProperty.call(req.query, param)
-            ) {
-                missing.push('Missing required parameter: ' + param);
-            }
-        });
-
-        if (missing.length) {
-            RES.badRequest(req, res, missing);
-        } else {
-            next();
-        }
-    },
-    created: function (req, res, data) {
-        jsonResponse(res, data, {
-            status: Status.OK,
-        });
-    },
-
-    requireHeaders: function (req, res, headers, next) {
-        let missing = [];
-
-        headers = Array.isArray(headers) ? headers : [headers];
-
-        headers.forEach(function (header) {
-            if (!(req.headers && _hasOwnProperty.call(req.headers, header))) {
-                missing.push('Missing required header parameter: ' + header);
-            }
-        });
-
-        if (missing.length) {
-            RES.badRequest(req, res, missing);
-        } else {
-            next();
-        }
-    },
-};
-
-export { RES };
+export default Resolve;

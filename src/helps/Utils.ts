@@ -60,7 +60,8 @@ export default class Util {
 
         let type = typeof val;
         if (type === 'string') return parse(val);
-        else if (type === 'number') return options && options.long ? fmtLong(val) : fmtShort(val);
+        else if (type === 'number')
+            return options && options.long ? fmtLong(val) : fmtShort(val);
     }
 
     public static toNumber(str: string) {
@@ -69,6 +70,10 @@ export default class Util {
     }
 
     public static omit(value: Object[] | Object, key: string[]) {
+        if (typeof value != 'object' || !Array.isArray(value)) {
+            return value;
+        }
+
         const omitObject = (value: Object, key: string[]) => {
             // Clone object
             let clone = JSON.parse(JSON.stringify(value));

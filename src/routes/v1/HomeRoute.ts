@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { RES } from '../../helps/Resolve';
 import { IRequest, IResponse, IRouterConfig } from '../../types/Server';
 
+import Resolve from '../../helps/Resolve';
 import Locals from '../../providers/Locals';
 
 export default class HomeRouter {
@@ -23,22 +23,18 @@ export default class HomeRouter {
 
     private initializeRoutes() {
         this.routerConfig.map((router) => {
-            this.router[router.method](
-                router.path,
-                router.middlewares,
-                router.handlers,
-            );
+            this.router[router.method](router.path, router.middlewares, router.handlers);
         });
     }
 
     private goToHome(req: IRequest, res: IResponse) {
         try {
-            RES.ok(req, res, {
+            Resolve.ok(req, res, {
                 name: Locals.config().name,
                 version: 'v1',
             });
         } catch (error) {
-            RES.serverError(req, res, error);
+            Resolve.serverError(req, res, error);
         }
     }
 }
